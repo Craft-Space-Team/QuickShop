@@ -1158,6 +1158,11 @@ public class QuickShop extends JavaPlugin implements QuickShopAPI {
         if (getConfig().getBoolean("purge.at-server-startup")) {
             shopPurger.purge();
         }
+        //Register Placeholders
+        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            new Placeholder(this).register();
+        }
+
         //Detect and do offline player name to uuid caching
         OfflinePlayer[] offlinePlayers = getServer().getOfflinePlayers();
         if (offlinePlayers.length > 2000) {
