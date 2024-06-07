@@ -164,7 +164,10 @@ public class PlayerListener extends AbstractQSListener {
             Shop controlPanelShop = plugin.getShopManager().getShop(Objects.requireNonNull(block).getLocation());
             if (controlPanelShop != null) {
                 if ((controlPanelShop.getOwner().equals(p.getUniqueId()) || QuickShop.getPermissionManager().hasPermission(p, "quickshop.other.control"))) {
-                    MsgUtil.sendControlPanelInfo(p, Objects.requireNonNull(plugin.getShopManager().getShop(block.getLocation())));
+//                    MsgUtil.sendControlPanelInfo(p, Objects.requireNonNull(plugin.getShopManager().getShop(block.getLocation())));//TODO
+                    /////
+                    p.chat("/shopsettings");
+                    /////
                     this.playClickSound(e.getPlayer());
                     Objects.requireNonNull(plugin.getShopManager().getShop(block.getLocation())).setSignText();
                     //Prevent use item by ancient

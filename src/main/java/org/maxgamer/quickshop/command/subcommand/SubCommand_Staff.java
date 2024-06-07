@@ -28,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import org.maxgamer.quickshop.QuickShop;
 import org.maxgamer.quickshop.api.command.CommandHandler;
 import org.maxgamer.quickshop.api.shop.Shop;
+import org.maxgamer.quickshop.util.ChatSheetPrinter;
 import org.maxgamer.quickshop.util.MsgUtil;
 import org.maxgamer.quickshop.util.PlayerFinder;
 import org.maxgamer.quickshop.util.Util;
@@ -95,8 +96,12 @@ public class SubCommand_Staff implements CommandHandler<Player> {
                     }
                     switch (cmdArg[0]) {
                         case "add":
-                            shop.addStaff(profile.getUuid());
-                            plugin.text().of(sender, "shop-staff-added", offlinePlayerName).send();
+                            if (shop.getStaffs().size() <= plugin.getConfig().getInt("shop.max-staffs") || plugin.getConfig().getInt("shop.max-staffs") == -1) {
+                                shop.addStaff(profile.getUuid());
+                                plugin.text().of(sender, "shop-staff-added", offlinePlayerName).send();
+                                return;
+                            }
+                            plugin.text().of(sender, "staff-is-full").send();
                             return;
                         case "del":
                             shop.delStaff(profile.getUuid());

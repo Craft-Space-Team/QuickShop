@@ -348,6 +348,14 @@ public class SimpleCommandManager implements CommandManager, TabCompleter, Comma
                 .disabledSupplier(() -> !plugin.getConfig().getBoolean("purge.enabled"))
                 .executor(new SubCommand_Purge(plugin))
                 .build());
+        registerCmd(CommandContainer.builder()
+                .prefix("preview")
+                .executor(new SubCommand_Preview(plugin))
+                .build());
+        registerCmd(CommandContainer.builder()
+                .prefix("settings")
+                .executor(new SubCommand_Settings(plugin))
+                .build());
     }
 
     /**

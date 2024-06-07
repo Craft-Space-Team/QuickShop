@@ -113,7 +113,7 @@ public class InventoryPreview implements Listener {
         }
         if (inventory == null) {
             final int size = 9;
-            inventory = plugin.getServer().createInventory(new QuickShopPreviewGUIHolder(), size, plugin.text().of(player, "menu.preview").forLocale());
+            inventory = plugin.getServer().createInventory(new QuickShopPreviewGUIHolder(), size, plugin.text().of(player, "menu.preview-gui").forLocale());
             for (int i = 0; i < size; i++) {
                 inventory.setItem(i, itemStack);
             }

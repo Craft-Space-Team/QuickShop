@@ -69,6 +69,8 @@ import org.maxgamer.quickshop.api.shop.ShopAction;
 import org.maxgamer.quickshop.api.shop.ShopChunk;
 import org.maxgamer.quickshop.api.shop.ShopManager;
 import org.maxgamer.quickshop.api.shop.ShopType;
+import org.maxgamer.quickshop.chat.QuickComponentImpl;
+import org.maxgamer.quickshop.chat.platform.minedown.BungeeQuickChat;
 import org.maxgamer.quickshop.economy.Trader;
 import org.maxgamer.quickshop.integration.SimpleIntegrationManager;
 import org.maxgamer.quickshop.localization.LocalizedMessagePair;
@@ -1263,65 +1265,75 @@ public class SimpleShopManager implements ShopManager, Reloadable {
      */
     @Override
     public void sendShopInfo(@NotNull Player p, @NotNull Shop shop) {
+        String shopType;
+        String itemNum;
+        String isToolDurability = "";
         // Potentially faster with an array?
         ItemStack items = shop.getItem();
         ChatSheetPrinter chatSheetPrinter = new ChatSheetPrinter(p);
-        chatSheetPrinter.printHeader();
-        chatSheetPrinter.printLine(plugin.text().of(p, "menu.shop-information").forLocale());
-        chatSheetPrinter.printLine(plugin.text().of(p, "menu.owner", shop.ownerName()).forLocale());
+//        chatSheetPrinter.printHeader();
+//        chatSheetPrinter.printLine(plugin.text().of(p, "menu.shop-information").forLocale());
+//        chatSheetPrinter.printLine(plugin.text().of(p, "menu.owner", shop.ownerName()).forLocale());
         // Enabled
+        String itemName = plugin.text().of(p, "menu.item", MsgUtil.getTranslateText(shop.getItem())).forLocale();
         plugin.getQuickChat().send(p, plugin.getQuickChat().getItemHologramChat(shop, items, p, ChatColor.DARK_PURPLE + plugin.text().of(p, "tableformat.left_begin").forLocale() + plugin.text().of(p, "menu.item", MsgUtil.getTranslateText(shop.getItem())).forLocale() + "  "));
         if (Util.isTool(items.getType())) {
-            chatSheetPrinter.printLine(
-                    plugin.text().of(p, "menu.damage-percent-remaining", Util.getToolPercentage(items)).forLocale());
+             isToolDurability = plugin.text().of(p, "menu.damage-percent-remaining", Util.getToolPercentage(items)).forLocale();
         }
         if (shop.isSelling()) {
             if (shop.getRemainingStock() == -1) {
-                chatSheetPrinter.printLine(
-                        plugin.text().of(p, "menu.stock", plugin.text().of(p, "signs.unlimited").forLocale()).forLocale());
+                itemNum = plugin.text().of(p, "menu.stock", plugin.text().of(p, "signs.unlimited").forLocale()).forLocale();
             } else {
-                chatSheetPrinter.printLine(
-                        plugin.text().of(p, "menu.stock", Integer.toString(shop.getRemainingStock())).forLocale());
+                itemNum = plugin.text().of(p, "menu.stock", Integer.toString(shop.getRemainingStock())).forLocale();
             }
         } else {
             if (shop.getRemainingSpace() == -1) {
-                chatSheetPrinter.printLine(
-                        plugin.text().of(p, "menu.space", plugin.text().of(p, "signs.unlimited").forLocale()).forLocale());
+                itemNum = plugin.text().of(p, "menu.space", plugin.text().of(p, "signs.unlimited").forLocale()).forLocale();
             } else {
-                chatSheetPrinter.printLine(
-                        plugin.text().of(p, "menu.space", Integer.toString(shop.getRemainingSpace())).forLocale());
+                itemNum = plugin.text().of(p, "menu.space", Integer.toString(shop.getRemainingSpace())).forLocale();
             }
         }
-        if (shop.getItem().getAmount() == 1) {
-            chatSheetPrinter.printLine(plugin.text().of(p, "menu.price-per", MsgUtil.getTranslateText(shop.getItem()), format(shop.getPrice(), shop)).forLocale());
-        } else {
-            chatSheetPrinter.printLine(plugin.text().of(p, "menu.price-per-stack", MsgUtil.getTranslateText(shop.getItem()), format(shop.getPrice(), shop), Integer.toString(shop.getItem().getAmount())).forLocale());
-        }
+//        if (shop.getItem().getAmount() == 1) {
+//            chatSheetPrinter.printLine(plugin.text().of(p, "menu.price-per", MsgUtil.getTranslateText(shop.getItem()), format(shop.getPrice(), shop)).forLocale());
+//        } else {
+//            chatSheetPrinter.printLine(plugin.text().of(p, "menu.price-per-stack", MsgUtil.getTranslateText(shop.getItem()), format(shop.getPrice(), shop), Integer.toString(shop.getItem().getAmount())).forLocale());
+//        }
         if (shop.isBuying()) {
-            chatSheetPrinter.printLine(plugin.text().of(p, "menu.this-shop-is-buying").forLocale());
+//            chatSheetPrinter.printLine(plugin.text().of(p, "menu.this-shop-is-buying").forLocale());
+            shopType = plugin.text().of(p, "menu.this-shop-is-buying").forLocale();
         } else {
-            chatSheetPrinter.printLine(plugin.text().of(p, "menu.this-shop-is-selling").forLocale());
+//            chatSheetPrinter.printLine(plugin.text().of(p, "menu.this-shop-is-selling").forLocale());
+            shopType = plugin.text().of(p, "menu.this-shop-is-selling").forLocale();
         }
-        MsgUtil.printEnchantment(p, shop, chatSheetPrinter);
-        if (items.getItemMeta() instanceof PotionMeta) {
-            PotionMeta potionMeta = (PotionMeta) items.getItemMeta();
-            PotionData potionData = potionMeta.getBasePotionData();
-            PotionEffectType potionEffectType = potionData.getType().getEffectType();
-            if (potionEffectType != null) {
-                chatSheetPrinter.printLine(plugin.text().of(p, "menu.effects").forLocale());
-                //Because the bukkit API limit, we can't get the actual effect level
-                chatSheetPrinter.printLine(ChatColor.YELLOW + MsgUtil.getPotioni18n(potionEffectType));
-            }
-            if (potionMeta.hasCustomEffects()) {
-                for (PotionEffect potionEffect : potionMeta.getCustomEffects()) {
-                    // https://hub.spigotmc.org/jira/browse/SPIGOT-1697
-                    // Internal api notes: amplifier starts from zero, so plus one to get the correct result
-                    int level = potionEffect.getAmplifier() + 1;
-                    chatSheetPrinter.printLine(ChatColor.YELLOW + MsgUtil.getPotioni18n(potionEffect.getType()) + " " + (level <= 10 ? RomanNumber.toRoman(potionEffect.getAmplifier()) : level));
-                }
-            }
-        }
-        chatSheetPrinter.printFooter();
+//        MsgUtil.printEnchantment(p, shop, chatSheetPrinter);
+//        if (items.getItemMeta() instanceof PotionMeta) {
+//            PotionMeta potionMeta = (PotionMeta) items.getItemMeta();
+//            PotionData potionData = potionMeta.getBasePotionData();
+//            PotionEffectType potionEffectType = potionData.getType().getEffectType();
+//            if (potionEffectType != null) {
+//                chatSheetPrinter.printLine(plugin.text().of(p, "menu.effects").forLocale());
+//                //Because the bukkit API limit, we can't get the actual effect level
+//                String isPotionEffect = ChatColor.YELLOW + MsgUtil.getPotioni18n(potionEffectType);
+//            }
+//            if (potionMeta.hasCustomEffects()) {
+//                for (PotionEffect potionEffect : potionMeta.getCustomEffects()) {
+//                    // https://hub.spigotmc.org/jira/browse/SPIGOT-1697
+//                    // Internal api notes: amplifier starts from zero, so plus one to get the correct result
+//                    int level = potionEffect.getAmplifier() + 1;
+//                    chatSheetPrinter.printLine(ChatColor.YELLOW + MsgUtil.getPotioni18n(potionEffect.getType()) + " " + (level <= 10 ? RomanNumber.toRoman(potionEffect.getAmplifier()) : level));
+//                }
+//            }
+//        }
+        /////
+//        chatSheetPrinter.printLine(
+//                plugin.text().of(p, "menu.shop-information").forLocale() +
+//                        shopType + " " + itemName + " " + itemNum
+//        );
+        plugin.getQuickChat().send(p, plugin.getQuickChat().getItemHologramChat(shop, items, p,
+                plugin.text().of(p, "menu.shop-information").forLocale() +
+                shopType + " " + itemName + isToolDurability + itemNum));
+        /////
+//        chatSheetPrinter.printFooter();
     }
 
     @Override
