@@ -58,14 +58,14 @@ public class SubCommand_Item implements CommandHandler<Player> {
                     if (material != null) {
                         itemStack = new ItemStack(material);
                     } else {
-                        plugin.text().of(sender, "no-trade-item").send();
+                        plugin.text().of(sender, "command.no-trade-item").send();
                         return;
                     }
                 } else {
                     itemStack = sender.getInventory().getItemInMainHand().clone();
                 }
                 if (itemStack.getType() == Material.AIR) {
-                    plugin.text().of(sender, "command.no-trade-item").send();
+                    plugin.text().of(sender, "no-anythings-in-your-hand").send();
                     return;
                 }
                 if (Util.isBlacklisted(itemStack) && !QuickShop.getPermissionManager().hasPermission(sender, "quickshop.bypass." + itemStack.getType().name())) {

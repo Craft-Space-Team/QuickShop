@@ -20,6 +20,7 @@
 package org.maxgamer.quickshop.command.subcommand;
 
 import lombok.AllArgsConstructor;
+import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BlockIterator;
@@ -50,8 +51,8 @@ public class SubCommand_Settings implements CommandHandler<Player> {
             if (shop == null) {
                 continue;
             }
-            sender.chat("/shopsettings");
-
+            sender.chat("/shopsilentopensettings");
+//            Bukkit.getServer().dispatchCommand(sender, "shopsilentopensettings");
             return;
         }
 

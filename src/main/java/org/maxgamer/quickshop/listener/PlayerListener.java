@@ -21,10 +21,7 @@ package org.maxgamer.quickshop.listener;
 
 import me.lucko.helper.cooldown.Cooldown;
 import me.lucko.helper.cooldown.CooldownMap;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -165,9 +162,6 @@ public class PlayerListener extends AbstractQSListener {
             if (controlPanelShop != null) {
                 if ((controlPanelShop.getOwner().equals(p.getUniqueId()) || QuickShop.getPermissionManager().hasPermission(p, "quickshop.other.control"))) {
 //                    MsgUtil.sendControlPanelInfo(p, Objects.requireNonNull(plugin.getShopManager().getShop(block.getLocation())));//TODO
-                    /////
-                    p.chat("/shopsettings");
-                    /////
                     this.playClickSound(e.getPlayer());
                     Objects.requireNonNull(plugin.getShopManager().getShop(block.getLocation())).setSignText();
                     //Prevent use item by ancient
@@ -183,6 +177,10 @@ public class PlayerListener extends AbstractQSListener {
                 if (plugin.getGameVersion().ordinal() >= GameVersion.v1_20_R1.ordinal()) {
                     e.setCancelled(true);
                 }
+                    /////
+                    p.chat("/shopsilentopensettings");
+//                    Bukkit.getServer().dispatchCommand(p, "shopsilentopensettings");
+                    /////
             }
         }
     }

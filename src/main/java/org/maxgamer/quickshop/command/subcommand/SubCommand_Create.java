@@ -93,10 +93,10 @@ public class SubCommand_Create implements CommandHandler<Player> {
             try {
                 Double.parseDouble(cmdArg[0]);
             } catch (NumberFormatException e) {
-                plugin.text().of("not-a-number").send();
+                plugin.text().of(sender, "not-a-number").send();
                 return;
             }
-            plugin.text().of("no-anythings-in-your-hand").send();
+            plugin.text().of(sender, "no-anythings-in-your-hand").send();
             return;
         } else {
             Material material = matchMaterial(cmdArg[1]);
