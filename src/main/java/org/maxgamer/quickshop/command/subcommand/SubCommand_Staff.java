@@ -28,7 +28,6 @@ import org.jetbrains.annotations.NotNull;
 import org.maxgamer.quickshop.QuickShop;
 import org.maxgamer.quickshop.api.command.CommandHandler;
 import org.maxgamer.quickshop.api.shop.Shop;
-import org.maxgamer.quickshop.util.ChatSheetPrinter;
 import org.maxgamer.quickshop.util.MsgUtil;
 import org.maxgamer.quickshop.util.PlayerFinder;
 import org.maxgamer.quickshop.util.Util;
@@ -81,7 +80,7 @@ public class SubCommand_Staff implements CommandHandler<Player> {
                         case "add":
                         case "del":
                         default:
-                            plugin.text().of(sender, "command.wrong-args").send();
+                            plugin.text().of(sender, "command.no-owner-given").send();
                             return;
                     }
                 case 2:
