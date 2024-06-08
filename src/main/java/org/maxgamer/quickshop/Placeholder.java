@@ -84,6 +84,10 @@ public class Placeholder extends PlaceholderExpansion {
                 return PlayerFinder.findNameByUUID(shop.getOwner());
             }
 
+            if (params.equalsIgnoreCase("staffnumber")) {
+                return String.valueOf(shop.getStaffs().size());
+            }
+
             for (int i = 0; i < plugin.getConfig().getInt("shop.max-staffs"); i++) {
                 if (params.equalsIgnoreCase("staff_" + (i + 1))) {
                     if (i < shop.getStaffs().size()) {
