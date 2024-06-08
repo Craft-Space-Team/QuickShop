@@ -80,11 +80,24 @@ public class SubCommand_Create implements CommandHandler<Player> {
     public void onCommand(@NotNull Player sender, @NotNull String commandLabel, @NotNull String[] cmdArg) {
         BlockIterator bIt = new BlockIterator(sender, 10);
         ItemStack item = sender.getInventory().getItemInMainHand();
-        if (cmdArg.length <= 1) {
+        if (cmdArg.length == 0) {
+            if (item.getType().isAir()) {
+                plugin.text().of(sender, "input-price").send();
+                return;
+            }
+        } else if (cmdArg.length == 1) {
             if (item.getType().isAir()) {
                 plugin.text().of(sender, "no-anythings-in-your-hand").send();
                 return;
             }
+            try {
+                Double.parseDouble(cmdArg[0]);
+            } catch (NumberFormatException e) {
+                plugin.text().of("not-a-number").send();
+                return;
+            }
+            plugin.text().of("no-anythings-in-your-hand").send();
+            return;
         } else {
             Material material = matchMaterial(cmdArg[1]);
             if (material == null) {

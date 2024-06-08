@@ -1,9 +1,9 @@
 package org.maxgamer.quickshop;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
-import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.util.BlockIterator;
 import org.jetbrains.annotations.NotNull;
 import org.maxgamer.quickshop.api.shop.Shop;
@@ -21,7 +21,7 @@ public class Placeholder extends PlaceholderExpansion {
     @Override
     @NotNull
     public String getAuthor() {
-        return String.join(", ", plugin.getDescription().getAuthors()); //
+        return String.join(", ", plugin.getDescription().getAuthors());
     }
 
     @Override
@@ -33,17 +33,26 @@ public class Placeholder extends PlaceholderExpansion {
     @Override
     @NotNull
     public String getVersion() {
-        return plugin.getDescription().getVersion(); //
+        return plugin.getDescription().getVersion();
     }
 
     @Override
     public boolean persist() {
-        return true; //
+        return true;
     }
 
     @Override
-    public String onRequest(OfflinePlayer player, @NotNull String params) {
-        BlockIterator bIt = new BlockIterator((Location) player, 10);
+    public String onRequest(OfflinePlayer offlinePlayer, @NotNull String params) {
+        if (!offlinePlayer.isOnline()) {
+            return null;
+        }
+
+        Player player = offlinePlayer.getPlayer();
+        if (player == null) {
+            return null;
+        }
+
+        BlockIterator bIt = new BlockIterator(player, 10);
 
         while (bIt.hasNext()) {
             final Block b = bIt.next();
@@ -58,25 +67,32 @@ public class Placeholder extends PlaceholderExpansion {
             }
 
             if (params.equalsIgnoreCase("type")) {
-                if (shop.isSelling()) {
-                    return plugin.text().of("menu.this-shop-is-selling").forLocale();
-                } else {
-                    return plugin.text().of("menu.this-shop-is-buying").forLocale();
-                }
+                return (shop.isSelling() ?
+                        plugin.text().of("menu.this-shop-is-selling").forLocale() :
+                        plugin.text().of("menu.this-shop-is-buying").forLocale());
             }
 
             if (params.equalsIgnoreCase("itemname")) {
                 return MsgUtil.getTranslateText(shop.getItem());
             }
 
-            for (int i = 0; i < plugin.getConfig().getInt("shop.max-staffs"); i++) {
+            if (params.equalsIgnoreCase("itemnumber")) {
+                return (shop.getRemainingStock() == -1 ? plugin.text().of("signs.unlimited").forLocale() : String.valueOf(shop.getRemainingStock()));
+            }
+
+            if (params.equalsIgnoreCase("owner")) {
+                return PlayerFinder.findNameByUUID(shop.getOwner());
+            }
+
+            for (int i = 0; i < shop.getStaffs().size(); i++) {
                 if (params.equalsIgnoreCase("staff_" + (i + 1))) {
                     return PlayerFinder.findNameByUUID(shop.getStaffs().get(i));
                 }
             }
 
         }
-
         return null;
+
     }
+
 }

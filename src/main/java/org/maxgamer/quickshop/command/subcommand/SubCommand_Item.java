@@ -52,7 +52,18 @@ public class SubCommand_Item implements CommandHandler<Player> {
                     plugin.text().of(sender, "not-managed-shop").send();
                     return;
                 }
-                ItemStack itemStack = sender.getInventory().getItemInMainHand().clone();
+                ItemStack itemStack;
+                if (cmdArg.length > 0) {
+                    Material material = Material.matchMaterial(cmdArg[0]);
+                    if (material != null) {
+                        itemStack = new ItemStack(material);
+                    } else {
+                        plugin.text().of(sender, "no-trade-item").send();
+                        return;
+                    }
+                } else {
+                    itemStack = sender.getInventory().getItemInMainHand().clone();
+                }
                 if (itemStack.getType() == Material.AIR) {
                     plugin.text().of(sender, "command.no-trade-item").send();
                     return;
