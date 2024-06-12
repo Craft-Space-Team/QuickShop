@@ -1,6 +1,8 @@
 package org.maxgamer.quickshop;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -72,8 +74,11 @@ public class Placeholder extends PlaceholderExpansion {
                         plugin.text().of("menu.this-shop-is-buying").forLocale());
             }
 
-            if (params.equalsIgnoreCase("itemname")) {
-                return MsgUtil.getTranslateText(shop.getItem());
+//            if (params.equalsIgnoreCase("itemname")) {
+//            }
+
+            if (params.equalsIgnoreCase("item")) {
+                return shop.getItem().getType().getKey().getKey();
             }
 
             if (params.equalsIgnoreCase("itemnumber")) {
